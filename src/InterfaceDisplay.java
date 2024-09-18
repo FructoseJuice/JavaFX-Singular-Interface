@@ -1,3 +1,5 @@
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
@@ -7,9 +9,11 @@ public class InterfaceDisplay {
     private HBox header = new HBox();
     private VBox ioRoot = new VBox();
 
+    private TextField ringInput = new TextField();
+
     public InterfaceDisplay(Stage primaryStage) {
         //Set backgrounds
-        BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf("Gray"), null, null);
+        BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf("LightGray"), null, null);
         Background greyBack = new Background(backgroundFill);
 
         //Set background of header and IO section
@@ -23,6 +27,12 @@ public class InterfaceDisplay {
         header.prefWidthProperty().bind(root.widthProperty());
         VBox.setVgrow(root, Priority.ALWAYS);
 
+        header.setStyle(CSS.HBOX_STYLE);
+
+        //Make header
+        Label ringLabel = new Label("Ring = ");
+        header.getChildren().add(ringLabel);
+        header.getChildren().add(ringInput);
 
         //Construct root
         root.getChildren().add(header);
