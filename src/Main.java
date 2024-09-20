@@ -3,13 +3,17 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
         InterfaceDisplay interfaceDisplay = new InterfaceDisplay(primaryStage);
 
         //Construct stage
@@ -18,6 +22,7 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.setMinHeight(500);
         primaryStage.setMinWidth(500);
-        primaryStage.show();
+        //primaryStage.show();
+        System.out.println(ShellNegotiator.executeCommand("pwd"));
     }
 }

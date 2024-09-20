@@ -1,4 +1,4 @@
-public class CSS {
+public class CSS_Definitions {
     static public String HBOX_STYLE =
         """
         -fx-border-color: black;

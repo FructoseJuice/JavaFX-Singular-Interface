@@ -27,7 +27,7 @@ public class InterfaceDisplay {
         header.prefWidthProperty().bind(root.widthProperty());
         VBox.setVgrow(root, Priority.ALWAYS);
 
-        header.setStyle(CSS.HBOX_STYLE);
+        header.setStyle(CSS_Definitions.HBOX_STYLE);
 
         //Make header
         Label ringLabel = new Label("Ring = ");
