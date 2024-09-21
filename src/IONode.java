@@ -42,10 +42,18 @@ public class IONode {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         buttonsRootNode.getChildren().addAll(computeButton, spacer, removeNodeButton);
 
+        //Set Horizontal and Vertical growth for nodes
         HBox.setHgrow(inNode, Priority.ALWAYS);
         HBox.setHgrow(outNode, Priority.ALWAYS);
         HBox.setHgrow(buttonsRootNode, Priority.ALWAYS);
 
+        VBox.setVgrow(inRootNode, Priority.ALWAYS);
+        VBox.setVgrow(outRootNode, Priority.ALWAYS);
+        VBox.setVgrow(inNode, Priority.ALWAYS);
+        VBox.setVgrow(outNode, Priority.ALWAYS);
+
+
+        //Set nodes on root
         root.getChildren().addAll(inRootNode, outRootNode, buttonsRootNode);
         root.setPadding(new Insets(3, 3, 3, 3));
 

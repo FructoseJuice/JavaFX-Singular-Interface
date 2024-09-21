@@ -15,7 +15,6 @@ public class InterfaceDisplay {
     private final VBox root = new VBox();
     private HBox header = new HBox();
     private final VBox ioRoot = new VBox(5);
-    private Set<IONode> ioNodesSet = new HashSet<>();
 
     private Button addNewIONodeButton = new Button("   +   ");
 
@@ -29,10 +28,8 @@ public class InterfaceDisplay {
         ioRoot.setBackground(greyBack);
 
         //Set height and width properties
-        //root.prefWidthProperty().bind(primaryStage.widthProperty());
         header.setMinHeight(50);
         header.prefWidthProperty().bind(root.widthProperty());
-
         header.setStyle(CSS_Definitions.HBOX_STYLE);
 
         //Make header
@@ -45,6 +42,7 @@ public class InterfaceDisplay {
         root.setBackground(new Background(new BackgroundFill(Paint.valueOf("Black"), null, null)));
         addNewIONodeButton.setPadding(new Insets(5, 0, 5, 0));
         root.getChildren().addAll(header, ioRoot, addNewIONodeButton);
+        VBox.setVgrow(ioRoot, Priority.ALWAYS);
 
         //Set event listener on button
         addNewIONodeButton.setOnMouseClicked(event -> {
@@ -59,7 +57,7 @@ public class InterfaceDisplay {
     public void addIONodeToDisplay(Stage stage) {
         IONode node = new IONode();
 
-        ioNodesSet.add(node);
+        VBox.setVgrow(node.getRootNode(), Priority.ALWAYS);
         ioRoot.getChildren().add(node.getRootNode());
 
         node.getRemoveNodeButton().setOnMouseClicked(event -> {
@@ -70,7 +68,6 @@ public class InterfaceDisplay {
     }
 
     public void removeIONodeToDisplay(Stage stage, IONode nodeToRemove) {
-        ioNodesSet.remove(nodeToRemove);
         ioRoot.getChildren().remove(nodeToRemove.getRootNode());
 
         setStageSize(stage, -1);
@@ -78,8 +75,6 @@ public class InterfaceDisplay {
 
     private void setStageSize(Stage stage, int operation) {
         stage.setWidth(stage.getWidth());
-        stage.setHeight(stage.getHeight() + operation*93 + operation*addNewIONodeButton.getHeight());
-        stage.setMinHeight(stage.getHeight());
-        stage.setMaxHeight(stage.getHeight());
+        stage.setHeight(root.getHeight() + 25 + operation*93 + operation*addNewIONodeButton.getHeight());
     }
 }

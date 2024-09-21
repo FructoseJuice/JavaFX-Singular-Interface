@@ -20,19 +20,27 @@ public class ShellNegotiator {
         Process process = pb.start();
 
         // Capture the output
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line = reader.readLine();
-
-        int tries = 0;
-        while (tries < 500 && line == null) {
-            line = reader.readLine();
-            tries++;
+        StringBuilder output = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append(System.lineSeparator());
+            }
         }
 
-        reader.close();
+        // Wait for the process to finish and check for errors
+        try {
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new IOException("Command exited with code: " + exitCode);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore the interrupted status
+            throw new IOException("Command execution was interrupted", e);
+        }
 
         //Return output
-        return line;
+        return output.toString().trim();
     }
 }
 
