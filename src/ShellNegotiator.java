@@ -9,7 +9,7 @@ public class ShellNegotiator {
 
     private static final String SINGULAR_PATH = "/home/fructose/Desktop/singular/bin/Singular";
 
-    public static String executeCommand(String commandInput, int UUID) throws IOException, InterruptedException {
+    public String executeCommand(String commandInput, int UUID, String ring) throws IOException, InterruptedException {
         // Construct the command pipeline
         List<String> commands = new ArrayList<>();
         commands.add("/bin/sh"); // invoke a shell
@@ -20,10 +20,11 @@ public class ShellNegotiator {
         File outputFile = File.createTempFile(UUID + "singular_output", ".txt");
 
         try (FileWriter writer = new FileWriter(inputFile)) {
+            //Add ring to command
+            String setRingCommand = "ring r=" + ring + ";\nsetring r;\n";
             // Write command input to the temporary file
-            writer.write(commandInput);
+            writer.write(setRingCommand + commandInput);
         }
-
 
         // Define the Singular command
         String singularCommand = SINGULAR_PATH + " < " + inputFile.getAbsolutePath() + " >> " + outputFile.getAbsolutePath();
@@ -46,8 +47,9 @@ public class ShellNegotiator {
         // Read the output from the output file
         String output = new String(Files.readAllBytes(Path.of(outputFile.getAbsolutePath())));
 
-        //Strip out singular output text
+        System.out.println(output);
 
+        //Strip out singular output text
         String defaultSingularOutput = """
  SINGULAR                                 /  Development
  A Computer Algebra System for Polynomial Computations       /   version 4.4.0
@@ -56,8 +58,9 @@ public class ShellNegotiator {
 FB Mathematik der Universitaet, D-67653 Kaiserslautern        \\""";
 
         output = output.replace(defaultSingularOutput, "");
+        output = output.replace("Auf Wiedersehen.", "\nAuf Wiedersehen.");
 
-        // Optionally delete the temporary input file
+        // delete the temporary files
         inputFile.delete();
         outputFile.delete();
 

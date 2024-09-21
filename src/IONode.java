@@ -1,9 +1,6 @@
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -20,12 +17,14 @@ public class IONode {
     private Button computeButton = new Button("Compute");
     private Button removeNodeButton = new Button("-");
 
-    private ShellNegotiator negotiator = new ShellNegotiator();
+    private final ShellNegotiator negotiator = new ShellNegotiator();
+    private final TextField ringTextField;
 
     private final int UUID;
 
-    public IONode(int UUID) {
+    public IONode(int UUID, TextField ringTextField) {
         this.UUID = UUID;
+        this.ringTextField = ringTextField;
 
         inNode.setPromptText("Input Command");
         outNode.setPromptText("Command Output");
@@ -80,7 +79,9 @@ public class IONode {
         String command = inNode.getText();
 
         if (!command.isEmpty() && !command.isBlank()) {
-            String out = negotiator.executeCommand(command, UUID);
+            String ring = ringTextField.getText();
+
+            String out = negotiator.executeCommand(command, UUID, (ring.isBlank()) ? "0" : ring);
 
             outNode.setText(Objects.requireNonNullElse(out, "null"));
         }

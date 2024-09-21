@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class InterfaceDisplay {
-    private TextField ringInput = new TextField();
+    private final TextField ringInput = new TextField();
 
     private final VBox root = new VBox();
     private HBox header = new HBox();
@@ -36,7 +36,7 @@ public class InterfaceDisplay {
 
         //Make header
         Label ringLabel = new Label("Ring = ");
-        ringInput.setPromptText("Input Ring");
+        ringInput.setPromptText("Input Ring. Default = 0.");
         header.getChildren().add(ringLabel);
         header.getChildren().add(ringInput);
 
@@ -57,7 +57,7 @@ public class InterfaceDisplay {
     }
 
     public void addIONodeToDisplay(Stage stage) {
-        IONode node = new IONode(IONodeUUIDCounter++);
+        IONode node = new IONode(IONodeUUIDCounter++, ringInput);
 
         VBox.setVgrow(node.getRootNode(), Priority.ALWAYS);
         ioRoot.getChildren().add(node.getRootNode());
