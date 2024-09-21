@@ -6,20 +6,13 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class InterfaceDisplay {
     private final TextField ringInput = new TextField();
 
     private final VBox root = new VBox();
-    private final VBox ioRoot = new VBox(5);
+    private final VBox ioRoot = new VBox();
 
-    private final Button addNewIONodeButton = new Button("   +   ");
-
-    private int IONodeUUIDCounter = 0;
-
-    public InterfaceDisplay(Stage primaryStage) {
+    public InterfaceDisplay() {
         //Set backgrounds
         BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf("LightGray"), null, null);
         Background greyBack = new Background(backgroundFill);
@@ -32,7 +25,7 @@ public class InterfaceDisplay {
         //Set height and width properties
         header.setMinHeight(50);
         header.prefWidthProperty().bind(root.widthProperty());
-        header.setStyle(CSS_Definitions.HBOX_STYLE);
+        header.setStyle(CSS_Definitions.GRAY_BORDER_STYLE);
 
         //Make header
         Label ringLabel = new Label("Ring = ");
@@ -42,13 +35,14 @@ public class InterfaceDisplay {
 
         //Construct root
         root.setBackground(new Background(new BackgroundFill(Paint.valueOf("Black"), null, null)));
+        Button addNewIONodeButton = new Button("   +   ");
         addNewIONodeButton.setPadding(new Insets(5, 0, 5, 0));
         root.getChildren().addAll(header, ioRoot, addNewIONodeButton);
         VBox.setVgrow(ioRoot, Priority.ALWAYS);
 
         //Set event listener on button
         addNewIONodeButton.setOnMouseClicked(event -> {
-            addIONodeToDisplay(primaryStage);
+            addIONodeToDisplay();
         });
     }
 
@@ -56,27 +50,28 @@ public class InterfaceDisplay {
         return root;
     }
 
-    public void addIONodeToDisplay(Stage stage) {
-        IONode node = new IONode(IONodeUUIDCounter++, ringInput);
+    public void addIONodeToDisplay() {
+        IONode node = new IONode(ringInput);
 
         VBox.setVgrow(node.getRootNode(), Priority.ALWAYS);
         ioRoot.getChildren().add(node.getRootNode());
 
         node.getRemoveNodeButton().setOnMouseClicked(event -> {
-            removeIONodeToDisplay(stage, node);
+            removeIONodeToDisplay(node);
         });
 
-        setStageSize(stage, 1);
+        resizeStage();
     }
 
-    public void removeIONodeToDisplay(Stage stage, IONode nodeToRemove) {
+    public void removeIONodeToDisplay(IONode nodeToRemove) {
         ioRoot.getChildren().remove(nodeToRemove.getRootNode());
-
-        setStageSize(stage, -1);
+        resizeStage();
     }
 
-    private void setStageSize(Stage stage, int operation) {
-        stage.setWidth(stage.getWidth());
-        stage.setHeight(root.getHeight() + 25 + operation*93 + operation*addNewIONodeButton.getHeight());
+    private void resizeStage() {
+        Stage stage = (Stage) root.getScene().getWindow();
+        stage.sizeToScene();
+        stage.setMinWidth(stage.getWidth());
+        stage.setMinHeight(stage.getHeight());
     }
 }

@@ -9,15 +9,15 @@ public class ShellNegotiator {
 
     private static final String SINGULAR_PATH = "/home/fructose/Desktop/singular/bin/Singular";
 
-    public String executeCommand(String commandInput, int UUID, String ring) throws IOException, InterruptedException {
+    public String executeCommand(String commandInput, String ring) throws IOException, InterruptedException {
         // Construct the command pipeline
         List<String> commands = new ArrayList<>();
         commands.add("/bin/sh"); // invoke a shell
         commands.add("-c"); // command separator
 
         // Create a temporary input file
-        File inputFile = File.createTempFile(UUID + "singular_input_", ".txt");
-        File outputFile = File.createTempFile(UUID + "singular_output", ".txt");
+        File inputFile = File.createTempFile("singular_input_", ".txt");
+        File outputFile = File.createTempFile("singular_output_", ".txt");
 
         try (FileWriter writer = new FileWriter(inputFile)) {
             //Add ring to command

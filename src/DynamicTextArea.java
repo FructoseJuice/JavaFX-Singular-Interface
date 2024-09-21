@@ -1,7 +1,5 @@
 import javafx.scene.control.TextArea;
 
-import java.util.Arrays;
-
 public class DynamicTextArea extends TextArea {
 
     public DynamicTextArea() {

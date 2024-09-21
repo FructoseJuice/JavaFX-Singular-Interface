@@ -1,11 +1,9 @@
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextFlow;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -19,10 +17,7 @@ public class IONode {
     private final ShellNegotiator negotiator = new ShellNegotiator();
     private final TextField ringTextField;
 
-    private final int UUID;
-
-    public IONode(int UUID, TextField ringTextField) {
-        this.UUID = UUID;
+    public IONode(TextField ringTextField) {
         this.ringTextField = ringTextField;
 
         inNode.setPromptText("Input Command");
@@ -59,6 +54,7 @@ public class IONode {
         //Set nodes on root
         root.getChildren().addAll(inRootNode, outRootNode, buttonsRootNode);
         root.setPadding(new Insets(3, 3, 3, 3));
+        root.setStyle(CSS_Definitions.GRAY_BORDER_STYLE);
 
         computeButton.setOnMouseClicked(event -> {
             try {
@@ -84,7 +80,7 @@ public class IONode {
 
             //Execute command in terminal
             //If ring field is empty, populate it with default 0
-            String out = negotiator.executeCommand(command, UUID, (ring.isBlank()) ? "0" : ring);
+            String out = negotiator.executeCommand(command, (ring.isBlank()) ? "0" : ring);
 
             outNode.setText(Objects.requireNonNullElse(out, "null"));
         }
