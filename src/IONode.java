@@ -22,7 +22,11 @@ public class IONode {
 
     private ShellNegotiator negotiator = new ShellNegotiator();
 
-    public IONode() {
+    private final int UUID;
+
+    public IONode(int UUID) {
+        this.UUID = UUID;
+
         inNode.setPromptText("Input Command");
         outNode.setPromptText("Command Output");
         outNode.setEditable(false);
@@ -60,7 +64,7 @@ public class IONode {
         computeButton.setOnMouseClicked(event -> {
             try {
                 compute();
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         });
@@ -72,11 +76,11 @@ public class IONode {
 
     public Button getRemoveNodeButton() {return removeNodeButton;}
 
-    public void compute() throws IOException {
+    public void compute() throws IOException, InterruptedException {
         String command = inNode.getText();
 
         if (!command.isEmpty() && !command.isBlank()) {
-            String out = negotiator.executeCommand(command);
+            String out = negotiator.executeCommand(command, UUID);
 
             outNode.setText(Objects.requireNonNullElse(out, "null"));
         }

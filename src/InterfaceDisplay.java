@@ -18,6 +18,8 @@ public class InterfaceDisplay {
 
     private Button addNewIONodeButton = new Button("   +   ");
 
+    private int IONodeUUIDCounter = 0;
+
     public InterfaceDisplay(Stage primaryStage) {
         //Set backgrounds
         BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf("LightGray"), null, null);
@@ -55,7 +57,7 @@ public class InterfaceDisplay {
     }
 
     public void addIONodeToDisplay(Stage stage) {
-        IONode node = new IONode();
+        IONode node = new IONode(IONodeUUIDCounter++);
 
         VBox.setVgrow(node.getRootNode(), Priority.ALWAYS);
         ioRoot.getChildren().add(node.getRootNode());

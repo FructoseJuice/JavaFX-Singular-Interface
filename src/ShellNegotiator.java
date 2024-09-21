@@ -1,46 +1,67 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShellNegotiator {
     public ShellNegotiator() {}
 
-    public String executeCommand(String command) throws IOException {
+    private static final String SINGULAR_PATH = "/home/fructose/Desktop/singular/bin/Singular";
+
+    public static String executeCommand(String commandInput, int UUID) throws IOException, InterruptedException {
         // Construct the command pipeline
         List<String> commands = new ArrayList<>();
         commands.add("/bin/sh"); // invoke a shell
         commands.add("-c"); // command separator
 
-        commands.add(command); // command pipeline
+        // Create a temporary input file
+        File inputFile = File.createTempFile(UUID + "singular_input_", ".txt");
+        File outputFile = File.createTempFile(UUID + "singular_output", ".txt");
 
-        // Execute the command pipeline
+        try (FileWriter writer = new FileWriter(inputFile)) {
+            // Write command input to the temporary file
+            writer.write(commandInput);
+        }
+
+
+        // Define the Singular command
+        String singularCommand = SINGULAR_PATH + " < " + inputFile.getAbsolutePath() + " >> " + outputFile.getAbsolutePath();
+        commands.add(singularCommand);
+
+        // Execute the command
         ProcessBuilder pb = new ProcessBuilder(commands);
+        pb.redirectErrorStream(true); // Combine stdout and stderr
         Process process = pb.start();
 
-        // Capture the output
-        StringBuilder output = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line).append(System.lineSeparator());
-            }
+        // Wait for the process to finish
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            //Clean up temp files if error
+            inputFile.delete();
+            outputFile.delete();
+            throw new IOException("Singular exited with code: " + exitCode);
         }
 
-        // Wait for the process to finish and check for errors
-        try {
-            int exitCode = process.waitFor();
-            if (exitCode != 0) {
-                throw new IOException("Command exited with code: " + exitCode);
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Restore the interrupted status
-            throw new IOException("Command execution was interrupted", e);
-        }
+        // Read the output from the output file
+        String output = new String(Files.readAllBytes(Path.of(outputFile.getAbsolutePath())));
 
-        //Return output
-        return output.toString().trim();
+        //Strip out singular output text
+
+        String defaultSingularOutput = """
+ SINGULAR                                 /  Development
+ A Computer Algebra System for Polynomial Computations       /   version 4.4.0
+                                                           0<
+ by: W. Decker, G.-M. Greuel, G. Pfister, H. Schoenemann     \\   Apr 2024
+FB Mathematik der Universitaet, D-67653 Kaiserslautern        \\""";
+
+        output = output.replace(defaultSingularOutput, "");
+
+        // Optionally delete the temporary input file
+        inputFile.delete();
+        outputFile.delete();
+
+        return output.trim(); // Return the output
     }
 }
 
