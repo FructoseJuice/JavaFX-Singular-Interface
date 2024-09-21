@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShellNegotiator {
-    public static String executeCommand(String command) throws IOException {
+    public ShellNegotiator() {}
+
+    public String executeCommand(String command) throws IOException {
         // Construct the command pipeline
         List<String> commands = new ArrayList<>();
         commands.add("/bin/sh"); // invoke a shell
@@ -21,8 +23,10 @@ public class ShellNegotiator {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line = reader.readLine();
 
-        while (line == null) {
+        int tries = 0;
+        while (tries < 500 && line == null) {
             line = reader.readLine();
+            tries++;
         }
 
         reader.close();

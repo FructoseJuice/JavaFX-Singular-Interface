@@ -19,10 +19,11 @@ public class Main extends Application {
         //Construct stage
         Scene scene = new Scene(interfaceDisplay.getRoot());
         scene.setFill(Paint.valueOf("Black"));
+
         primaryStage.setScene(scene);
-        primaryStage.setMinHeight(500);
-        primaryStage.setMinWidth(500);
-        //primaryStage.show();
-        System.out.println(ShellNegotiator.executeCommand("pwd"));
+        primaryStage.setMinHeight(110);
+        primaryStage.setMaxHeight(110);
+        primaryStage.setMinWidth(575);
+        primaryStage.show();
     }
 }
