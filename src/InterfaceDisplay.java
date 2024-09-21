@@ -13,10 +13,9 @@ public class InterfaceDisplay {
     private final TextField ringInput = new TextField();
 
     private final VBox root = new VBox();
-    private HBox header = new HBox();
     private final VBox ioRoot = new VBox(5);
 
-    private Button addNewIONodeButton = new Button("   +   ");
+    private final Button addNewIONodeButton = new Button("   +   ");
 
     private int IONodeUUIDCounter = 0;
 
@@ -26,6 +25,7 @@ public class InterfaceDisplay {
         Background greyBack = new Background(backgroundFill);
 
         //Set background of header and IO section
+        HBox header = new HBox();
         header.setBackground(greyBack);
         ioRoot.setBackground(greyBack);
 

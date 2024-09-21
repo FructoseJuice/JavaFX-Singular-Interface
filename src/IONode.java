@@ -11,11 +11,10 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class IONode {
-    private VBox root = new VBox(2);
-    private DynamicTextArea inNode = new DynamicTextArea();
-    private DynamicTextArea outNode = new DynamicTextArea();
-    private Button computeButton = new Button("Compute");
-    private Button removeNodeButton = new Button("-");
+    private final VBox root = new VBox(2);
+    private final DynamicTextArea inNode = new DynamicTextArea();
+    private final DynamicTextArea outNode = new DynamicTextArea();
+    private final Button removeNodeButton = new Button("-");
 
     private final ShellNegotiator negotiator = new ShellNegotiator();
     private final TextField ringTextField;
@@ -43,6 +42,7 @@ public class IONode {
         //Create spacer between buttons and construct root hbox
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
+        Button computeButton = new Button("Compute");
         buttonsRootNode.getChildren().addAll(computeButton, spacer, removeNodeButton);
 
         //Set Horizontal and Vertical growth for nodes
@@ -78,9 +78,12 @@ public class IONode {
     public void compute() throws IOException, InterruptedException {
         String command = inNode.getText();
 
+        //Process command
         if (!command.isEmpty() && !command.isBlank()) {
             String ring = ringTextField.getText();
 
+            //Execute command in terminal
+            //If ring field is empty, populate it with default 0
             String out = negotiator.executeCommand(command, UUID, (ring.isBlank()) ? "0" : ring);
 
             outNode.setText(Objects.requireNonNullElse(out, "null"));

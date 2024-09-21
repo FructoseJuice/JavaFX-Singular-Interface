@@ -26,9 +26,9 @@ public class ShellNegotiator {
             writer.write(setRingCommand + commandInput);
         }
 
-        // Define the Singular command
-        String singularCommand = SINGULAR_PATH + " < " + inputFile.getAbsolutePath() + " >> " + outputFile.getAbsolutePath();
-        commands.add(singularCommand);
+        // Define the Singular console command
+        String consoleCommand = SINGULAR_PATH + " < " + inputFile.getAbsolutePath() + " >> " + outputFile.getAbsolutePath();
+        commands.add(consoleCommand);
 
         // Execute the command
         ProcessBuilder pb = new ProcessBuilder(commands);
@@ -46,8 +46,6 @@ public class ShellNegotiator {
 
         // Read the output from the output file
         String output = new String(Files.readAllBytes(Path.of(outputFile.getAbsolutePath())));
-
-        System.out.println(output);
 
         //Strip out singular output text
         String defaultSingularOutput = """
