@@ -17,7 +17,7 @@ public class Main extends Application {
         scene.setFill(Paint.valueOf("Black"));
 
         primaryStage.setScene(scene);
-        primaryStage.setMinHeight(110);
+        primaryStage.setMinHeight(150);
         primaryStage.setMinWidth(500);
         primaryStage.show();
     }

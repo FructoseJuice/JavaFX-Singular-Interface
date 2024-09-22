@@ -29,20 +29,22 @@ public class InterfaceDisplay {
         header.setStyle(CSS_Definitions.GRAY_BORDER_STYLE);
 
 
+        Button addNewIONodeButton = new Button("   +   ");
+        addNewIONodeButton.setPadding(new Insets(5, 0, 5, 0));
+
         //Populate header with components
         Label ringLabel = new Label("Ring = ");
         ringInput.setPromptText("Input Ring. Default = 0.");
-        header.getChildren().add(ringLabel);
-        header.getChildren().add(ringInput);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        header.getChildren().addAll(ringLabel, ringInput, spacer, addNewIONodeButton);
 
 
         //Construct root
         root.setBackground(new Background(new BackgroundFill(Paint.valueOf("Black"), null, null)));
 
-        Button addNewIONodeButton = new Button("   +   ");
-        addNewIONodeButton.setPadding(new Insets(5, 0, 5, 0));
-
-        root.getChildren().addAll(header, ioRoot, addNewIONodeButton);
+        root.getChildren().addAll(header, ioRoot);
 
         //Ensure IO nodes grow with window resize
         VBox.setVgrow(ioRoot, Priority.ALWAYS);
@@ -78,7 +80,6 @@ public class InterfaceDisplay {
     private void resizeStage() {
         Stage stage = (Stage) root.getScene().getWindow();
         stage.sizeToScene();
-        stage.setMinWidth(stage.getWidth());
         stage.setMinHeight(stage.getHeight());
     }
 }
