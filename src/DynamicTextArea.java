@@ -1,6 +1,7 @@
 import javafx.scene.control.TextArea;
 
 public class DynamicTextArea extends TextArea {
+    private final int HEIGHT_THRESHOLD = 25;
 
     public DynamicTextArea() {
         super();
@@ -19,6 +20,8 @@ public class DynamicTextArea extends TextArea {
         // Count the number of newline characters
         int lineCount = text.length() - text.replace("\n", "").length();
         // Set the height based on the row count (you can adjust the row height as needed)
-        setPrefRowCount(lineCount);
+        if (lineCount <= HEIGHT_THRESHOLD) {
+            setPrefRowCount(lineCount);
+        }
     }
 }
