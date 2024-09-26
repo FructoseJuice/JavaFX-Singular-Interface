@@ -1,5 +1,7 @@
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -10,8 +12,9 @@ import java.util.Objects;
 
 public class IONode {
     private final VBox root = new VBox(5);
+
     private final DynamicTextArea inNode = new DynamicTextArea();
-    private final DynamicTextArea outNode = new DynamicTextArea();
+    private final TextArea outNode = new TextArea();
 
     private final ShellNegotiator negotiator;
 
@@ -22,8 +25,7 @@ public class IONode {
         outNode.setPromptText("Command Output");
         outNode.setEditable(false);
 
-        inNode.setMinHeight(100);
-        outNode.setMinHeight(200);
+        setOutNodeProperties();
 
         //Set in and out nodes on root node
         HBox inRootNode = new HBox();
@@ -68,11 +70,11 @@ public class IONode {
         });
 
         clearIn.setOnMouseClicked(event -> {
-            inNode.setText("");
+            flushIn();
         });
 
         clearOut.setOnMouseClicked(event -> {
-            outNode.setText("");
+            flushOut();
         });
     }
 
@@ -84,15 +86,22 @@ public class IONode {
         String command = inNode.getText();
 
         negotiator.sendInputToProcess(command);
-
-        //Execute command in terminal
-        //If ring field is empty, populate it with default 0
-        //String out = negotiator.executeCommand(command, (ring.isBlank()) ? "0" : ring);
-
-        //outNode.setText(Objects.requireNonNullElse(out, "null"));
     }
 
     public void flushOut() {
         outNode.setText("");
+    }
+
+    public void flushIn() {
+        inNode.setText("");
+    }
+
+    private void setOutNodeProperties() {
+        outNode.setWrapText(false);
+
+        // Scroll to bottom whenever text changes
+        outNode.textProperty().addListener((observable, oldValue, newValue) -> {
+            outNode.setScrollTop(Double.MAX_VALUE);
+        });
     }
 }

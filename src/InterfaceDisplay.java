@@ -47,4 +47,8 @@ public class InterfaceDisplay {
     public void flushOut() {
         ioNode.flushOut();
     }
+
+    public void flushIn() {
+        ioNode.flushIn();
+    }
 }

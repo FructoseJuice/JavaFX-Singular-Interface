@@ -1,15 +1,20 @@
+import javafx.scene.control.TextArea;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class ShellNegotiator {
     private Process process;
     private PrintWriter processWriter;
     private static final String SINGULAR_PATH = "/home/fructose/Desktop/singular/bin/Singular";
 
-    private final DynamicTextArea OUT_NODE;
+    private final TextArea OUT_NODE;
 
-    public ShellNegotiator(DynamicTextArea outNode) {
+    private int commandID = 0;
+
+    public ShellNegotiator(TextArea outNode) {
         OUT_NODE = outNode;
         startProcess();
     }
@@ -33,13 +38,9 @@ public class ShellNegotiator {
             Thread outputReaderThread = new Thread(() -> {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                     String line;
-                    String output = "";
 
                     while ((line = reader.readLine()) != null) {
-                        output = line + "\n" + OUT_NODE.getText();
-                        output = output.trim();
-
-                        OUT_NODE.setText(output);
+                        OUT_NODE.appendText("\n" + line.trim());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

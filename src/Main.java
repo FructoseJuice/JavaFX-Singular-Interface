@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -12,37 +13,43 @@ public class Main extends Application {
         launch(args);
     }
 
+    private static final InterfaceDisplay interfaceDisplay = new InterfaceDisplay();
+
     @Override
     public void start(Stage primaryStage) {
-        InterfaceDisplay interfaceDisplay = new InterfaceDisplay();
-
         //Construct stage
         Scene scene = new Scene(interfaceDisplay.getRoot());
         scene.setFill(Paint.valueOf("Black"));
 
 
         //Set event filter for Ctrl+C to compute
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if (!event.isControlDown()) return;
-
-            switch(event.getCode()) {
-                case KeyCode.C -> {
-                    try {
-                        interfaceDisplay.compute();
-                    } catch (IOException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-
-                case KeyCode.F -> {
-                    interfaceDisplay.flushOut();
-                }
-            }
-        });
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, this::handleHotkeyEvents);
 
         primaryStage.setScene(scene);
-        primaryStage.setMinHeight(150);
-        primaryStage.setMinWidth(500);
+        primaryStage.setMinHeight(500);
+        primaryStage.setMinWidth(580);
         primaryStage.show();
+    }
+
+    private void handleHotkeyEvents(KeyEvent event) {
+        if (!event.isControlDown()) return;
+
+        switch(event.getCode()) {
+            case KeyCode.C -> {
+                try {
+                    interfaceDisplay.compute();
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            case KeyCode.F -> {
+                interfaceDisplay.flushOut();
+            }
+
+            case KeyCode.D -> {
+                interfaceDisplay.flushIn();
+            }
+        }
     }
 }
