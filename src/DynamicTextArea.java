@@ -22,6 +22,9 @@ public class DynamicTextArea extends TextArea {
         // Set the height based on the row count (you can adjust the row height as needed)
         if (lineCount <= HEIGHT_THRESHOLD) {
             setPrefRowCount(lineCount);
+        } else {
+            setPrefRowCount(HEIGHT_THRESHOLD);
+            setScrollTop(Double.MAX_VALUE);
         }
     }
 }

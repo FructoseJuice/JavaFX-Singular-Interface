@@ -22,6 +22,9 @@ public class IONode {
         outNode.setPromptText("Command Output");
         outNode.setEditable(false);
 
+        inNode.setMinHeight(100);
+        outNode.setMinHeight(200);
+
         //Set in and out nodes on root node
         HBox inRootNode = new HBox();
         HBox outRootNode = new HBox();
@@ -55,7 +58,6 @@ public class IONode {
         root.setStyle(CSS_Definitions.GRAY_BORDER_STYLE);
 
 
-
         //BUTTON HANDLERS
         computeButton.setOnMouseClicked(event -> {
             try {
@@ -81,17 +83,16 @@ public class IONode {
     public void compute() throws IOException, InterruptedException {
         String command = inNode.getText();
 
-        //Process command
-        if (!command.isEmpty() && !command.isBlank()) {
-            negotiator.sendInputToProcess(command);
+        negotiator.sendInputToProcess(command);
 
-            //Execute command in terminal
-            //If ring field is empty, populate it with default 0
-            //String out = negotiator.executeCommand(command, (ring.isBlank()) ? "0" : ring);
+        //Execute command in terminal
+        //If ring field is empty, populate it with default 0
+        //String out = negotiator.executeCommand(command, (ring.isBlank()) ? "0" : ring);
 
-            //outNode.setText(Objects.requireNonNullElse(out, "null"));
-        } else {
-            outNode.setText(outNode.getText().trim() + "\nSkipped blank command.\n");
-        }
+        //outNode.setText(Objects.requireNonNullElse(out, "null"));
+    }
+
+    public void flushOut() {
+        outNode.setText("");
     }
 }

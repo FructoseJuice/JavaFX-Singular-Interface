@@ -6,15 +6,18 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class InterfaceDisplay {
     private final VBox root = new VBox();
-    private final VBox ioRoot = new VBox();
+    private final IONode ioNode;
 
     public InterfaceDisplay() {
         //Set backgrounds
         BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf("LightGray"), null, null);
         Background greyBack = new Background(backgroundFill);
 
+        VBox ioRoot = new VBox();
         ioRoot.setBackground(greyBack);
 
         //Construct root
@@ -26,13 +29,22 @@ public class InterfaceDisplay {
         VBox.setVgrow(ioRoot, Priority.ALWAYS);
 
         //Create ionode
-        IONode node = new IONode();
-        ioRoot.getChildren().add(node.getRootNode());
+        ioNode = new IONode();
+        ioRoot.getChildren().add(ioNode.getRootNode());
 
-        VBox.setVgrow(node.getRootNode(), Priority.ALWAYS);
+        VBox.setVgrow(ioNode.getRootNode(), Priority.ALWAYS);
     }
 
     public VBox getRoot() {
         return root;
+    }
+
+    public void compute() throws IOException, InterruptedException {
+        ioNode.compute();
+    }
+
+
+    public void flushOut() {
+        ioNode.flushOut();
     }
 }
