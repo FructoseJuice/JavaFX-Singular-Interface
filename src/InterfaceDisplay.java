@@ -100,7 +100,7 @@ public class InterfaceDisplay {
         String command = node.getInNode().getText();
 
         //Clear output and update with command ID
-        node.getOutNode().setText(commandIDToString(node.getMyCommandID()));
+        node.getOutNode().setText("COMMAND #: " + commandIDToString(node.getMyCommandID()) + "\n");
         negotiator.sendInputToProcess(command, node.getOutNode());
 
         incrementCommandId(node);
