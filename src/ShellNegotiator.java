@@ -40,11 +40,7 @@ public class ShellNegotiator {
                     String line;
 
                     while ((line = reader.readLine()) != null) {
-                        if (targetOutNode.getText().isBlank()) {
-                            targetOutNode.appendText(line.trim());
-                        } else {
-                            targetOutNode.appendText("\n" + line.trim());
-                        }
+                        targetOutNode.appendText("\n" + line.trim());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

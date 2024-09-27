@@ -18,9 +18,16 @@ public class IONode {
     private final DynamicTextArea inNode = new DynamicTextArea();
     private final TextArea outNode = new TextArea();
 
+    private final Label inLabel = new Label("   in: ");
+    private final Label outLabel = new Label("out: ");
+
     private final Button removeNodeButton = new Button("-");
 
-    public IONode() {
+    private int myCommandID;
+
+    public IONode(String commandIDString, int commandID) {
+        updateCommandID(commandIDString, commandID);
+
         inNode.setPromptText("Input Command");
         outNode.setPromptText("Command Output");
         outNode.setEditable(false);
@@ -33,8 +40,6 @@ public class IONode {
         //Set in and out nodes on root node
         HBox inRootNode = new HBox();
         HBox outRootNode = new HBox();
-        Label inLabel = new Label("   in: ");
-        Label outLabel = new Label("out: ");
 
         inRootNode.getChildren().addAll(inLabel, inNode);
         outRootNode.getChildren().addAll(outLabel, outNode);
@@ -76,13 +81,13 @@ public class IONode {
 
     public Button getRemoveNodeButton() {return removeNodeButton;}
 
-
-    public void flushOut() {
-        outNode.setText("");
+    public int getMyCommandID() {
+        return myCommandID;
     }
 
-    public void flushIn() {
-        inNode.setText("");
+    public void updateCommandID(String commandIdString, int commandId) {
+        inLabel.setText("   in: \n" + commandIdString);
+        myCommandID = commandId;
     }
 
     private void setOutNodeProperties() {
@@ -93,4 +98,14 @@ public class IONode {
             outNode.setScrollTop(Double.MAX_VALUE);
         });
     }
+
+    /*
+    public void flushOut() {
+        outNode.setText("");
+    }
+
+    public void flushIn() {
+        inNode.setText("");
+    }
+ */
 }

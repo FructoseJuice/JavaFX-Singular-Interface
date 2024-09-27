@@ -16,6 +16,8 @@ public class InterfaceDisplay {
 
     private final ShellNegotiator negotiator;
 
+    private static int commandID = 0;
+
     public InterfaceDisplay() {
         //Background for nodes
         BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf("LightGray"), null, null);
@@ -62,22 +64,20 @@ public class InterfaceDisplay {
 
 
     public IONode addIONodeToDisplay() {
-        IONode node = new IONode();
+        IONode node = new IONode(commandIDToString(commandID), commandID++);
 
         VBox.setVgrow(node.getRootNode(), Priority.ALWAYS);
         ioRoot.getChildren().add(node.getRootNode());
 
         //Create event listeners
-        node.getRemoveNodeButton().setOnMouseClicked(event -> {
-            removeIONodeToDisplay(node);
-        });
+        node.getRemoveNodeButton().setOnMouseClicked(event -> removeIONodeToDisplay(node));
 
         node.getInNode().setOnKeyPressed(event -> {
             if (!event.isControlDown()) return;
 
             if (event.getCode() == KeyCode.C) {
                 try {
-                    compute(node.getInNode(), node.getOutNode());
+                    compute(node);
                 } catch (IOException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -96,21 +96,21 @@ public class InterfaceDisplay {
         return root;
     }
 
-    public void compute(TextArea inNode, TextArea outNode) throws IOException, InterruptedException {
-        String command = inNode.getText();
+    public void compute(IONode node) throws IOException, InterruptedException {
+        String command = node.getInNode().getText();
 
-        negotiator.sendInputToProcess(command, outNode);
+        //Clear output and update with command ID
+        node.getOutNode().setText(commandIDToString(node.getMyCommandID()));
+        negotiator.sendInputToProcess(command, node.getOutNode());
+
+        incrementCommandId(node);
     }
 
-    /*
-    public void flushOut() {
-        ioNode.flushOut();
+    public void incrementCommandId(IONode node) {
+        node.updateCommandID(commandIDToString(commandID), ++commandID);
     }
 
-    public void flushIn() {
-        ioNode.flushIn();
+    public String commandIDToString(int num) {
+        return String.format("[%03d]", num);
     }
-
-
- */
 }
