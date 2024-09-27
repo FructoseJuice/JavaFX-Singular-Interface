@@ -2,20 +2,20 @@ import javafx.scene.control.TextArea;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class ShellNegotiator {
     private Process process;
     private PrintWriter processWriter;
     private static final String SINGULAR_PATH = "/home/fructose/Desktop/singular/bin/Singular";
 
-    private final TextArea OUT_NODE;
+    private TextArea targetOutNode;
 
-    private int commandID = 0;
+    private final HashSet<String> knownVariables = new HashSet<>();
 
     public ShellNegotiator(TextArea outNode) {
-        OUT_NODE = outNode;
+        targetOutNode = outNode;
         startProcess();
     }
 
@@ -40,7 +40,11 @@ public class ShellNegotiator {
                     String line;
 
                     while ((line = reader.readLine()) != null) {
-                        OUT_NODE.appendText("\n" + line.trim());
+                        if (targetOutNode.getText().isBlank()) {
+                            targetOutNode.appendText(line.trim());
+                        } else {
+                            targetOutNode.appendText("\n" + line.trim());
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -60,7 +64,9 @@ public class ShellNegotiator {
     }
 
 
-    public void sendInputToProcess(String input) {
+    public void sendInputToProcess(String input, TextArea outNode) {
+        this.targetOutNode = outNode;
+
         if (processWriter != null) {
             processWriter.println(input); // Send the input to the process
         }

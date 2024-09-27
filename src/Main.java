@@ -23,7 +23,7 @@ public class Main extends Application {
 
 
         //Set event filter for Ctrl+C to compute
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, this::handleHotkeyEvents);
+        //scene.addEventFilter(KeyEvent.KEY_PRESSED, this::handleHotkeyEvents);
 
         primaryStage.setScene(scene);
         primaryStage.setMinHeight(500);
@@ -31,6 +31,7 @@ public class Main extends Application {
         primaryStage.show();
     }
 
+    /*
     private void handleHotkeyEvents(KeyEvent event) {
         if (!event.isControlDown()) return;
 
@@ -52,4 +53,6 @@ public class Main extends Application {
             }
         }
     }
+
+     */
 }
