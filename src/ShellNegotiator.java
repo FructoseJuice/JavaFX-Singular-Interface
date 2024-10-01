@@ -10,6 +10,9 @@ public class ShellNegotiator {
     private PrintWriter processWriter;
     private static final String SINGULAR_PATH = "/home/fructose/Desktop/singular/bin/Singular";
 
+    private StringBuilder sessionOutput = new StringBuilder();
+    private StringBuilder sessionInput = new StringBuilder();
+
     private TextArea targetOutNode;
 
     private final HashSet<String> knownVariables = new HashSet<>();
@@ -40,7 +43,10 @@ public class ShellNegotiator {
                     String line;
 
                     while ((line = reader.readLine()) != null) {
+                        //try (BufferedWriter outputWriter = new BufferedWriter())
+
                         targetOutNode.appendText("\n" + line.trim());
+                        sessionOutput.append("\n").append(line.trim()).append("\n");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -60,12 +66,24 @@ public class ShellNegotiator {
     }
 
 
-    public void sendInputToProcess(String input, TextArea outNode) {
+    public void sendInputToProcess(String input, TextArea outNode, String commandId) {
         this.targetOutNode = outNode;
 
         if (processWriter != null) {
+            sessionInput.append("\t\t").append(commandId);
+            sessionInput.append(input).append("\n");
+            sessionOutput.append("\t\t").append(commandId);
+
             processWriter.println(input); // Send the input to the process
         }
+    }
+
+    public StringBuilder getSessionInput() {
+        return sessionInput;
+    }
+
+    public StringBuilder getSessionOutput() {
+        return sessionOutput;
     }
 }
 

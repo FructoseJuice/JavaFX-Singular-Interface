@@ -8,6 +8,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class InterfaceDisplay {
@@ -36,7 +38,12 @@ public class InterfaceDisplay {
         Button addNewIONodeButton = new Button("   +   ");
         addNewIONodeButton.setPadding(new Insets(5, 0, 5, 0));
 
-        header.getChildren().add(addNewIONodeButton);
+        //Create file creation nodes
+        Button saveSessionIOBUtton = new Button("Save Session I/O");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        header.getChildren().addAll(addNewIONodeButton, spacer, saveSessionIOBUtton);
 
         //Construct root
         root.setBackground(new Background(new BackgroundFill(Paint.valueOf("Black"), null, null)));
@@ -56,6 +63,14 @@ public class InterfaceDisplay {
         //Set button event listeners
         addNewIONodeButton.setOnMouseClicked(event -> {
             addIONodeToDisplay();
+        });
+
+        saveSessionIOBUtton.setOnMouseClicked(event -> {
+            try {
+                flushSessionIO();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         //Start process
@@ -98,10 +113,11 @@ public class InterfaceDisplay {
 
     public void compute(IONode node) throws IOException, InterruptedException {
         String command = node.getInNode().getText();
+        String commandId = commandIDToString(node.getMyCommandID()) + "\n";
 
         //Clear output and update with command ID
-        node.getOutNode().setText("COMMAND #: " + commandIDToString(node.getMyCommandID()) + "\n");
-        negotiator.sendInputToProcess(command, node.getOutNode());
+        node.getOutNode().setText("COMMAND #: " + commandId);
+        negotiator.sendInputToProcess(command, node.getOutNode(), commandId);
 
         incrementCommandId(node);
     }
@@ -112,5 +128,61 @@ public class InterfaceDisplay {
 
     public String commandIDToString(int num) {
         return String.format("[%03d]", num);
+    }
+
+    public boolean flushSessionIO() throws IOException {
+        if (!Main.verifyExistenceOfOutputDirectory()) {
+            System.out.println("Could not write files. \nDirectory does not Exist.");
+            return false;
+        }
+
+        StringBuilder in = negotiator.getSessionInput();
+        StringBuilder out = negotiator.getSessionOutput();
+
+        if (in.isEmpty() && out.isEmpty()) {
+            return true;
+        }
+
+        if (!Main.createIOFiles()) {
+            System.out.println("Could not create files.");
+            return false;
+        }
+
+        File inFile = Main.In_File;
+        File outFile = Main.Out_File;
+
+        //Flush out strings
+        try (FileWriter fileWriter = new FileWriter(inFile, true)) { // 'true' to append
+            fileWriter.write(in.toString());
+            System.out.println("Contents appended to the file successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        try (FileWriter fileWriter = new FileWriter(outFile, true)) { // 'true' to append
+            String[] lines = out.toString().split("\n");
+
+            //Remove singular output
+            if (lines.length != 0 && lines[1].contains("SINGULAR")) {
+                //Remove the first 6 lines of input
+                for (int i = 1; i < 12; i++) {
+                    lines[i] = "";
+                }
+            }
+
+            for (String line : lines) {
+                if (!line.isEmpty()) {
+                    fileWriter.write(line + "\n");
+                }
+            }
+
+            System.out.println("Contents appended to the file successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 }
