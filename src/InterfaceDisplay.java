@@ -96,6 +96,8 @@ public class InterfaceDisplay {
                 } catch (IOException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+            } if (event.getCode() == KeyCode.F) {
+                node.flushIn();
             }
         });
 
@@ -155,6 +157,8 @@ public class InterfaceDisplay {
         try (FileWriter fileWriter = new FileWriter(inFile, true)) { // 'true' to append
             fileWriter.write(in.toString());
             System.out.println("Contents appended to the file successfully.");
+            //Flush string builder
+            in.delete(0, in.length()-1);
         } catch (IOException e) {
             e.printStackTrace();
             return false;

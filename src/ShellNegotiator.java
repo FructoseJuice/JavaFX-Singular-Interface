@@ -15,7 +15,7 @@ public class ShellNegotiator {
 
     private TextArea targetOutNode;
 
-    private final HashSet<String> knownVariables = new HashSet<>();
+    private OutputPrettifier prettifier = new OutputPrettifier();
 
     public ShellNegotiator(TextArea outNode) {
         targetOutNode = outNode;
@@ -44,6 +44,7 @@ public class ShellNegotiator {
 
                     while ((line = reader.readLine()) != null) {
                         //try (BufferedWriter outputWriter = new BufferedWriter())
+                        line = prettifier.prettifyOutput(line);
 
                         targetOutNode.appendText("\n" + line.trim());
                         sessionOutput.append("\n").append(line.trim()).append("\n");

@@ -103,9 +103,8 @@ public class IONode {
     public void flushOut() {
         outNode.setText("");
     }
-
+*/
     public void flushIn() {
         inNode.setText("");
     }
- */
 }
