@@ -158,7 +158,7 @@ public class InterfaceDisplay {
             fileWriter.write(in.toString());
             System.out.println("Contents appended to the file successfully.");
             //Flush string builder
-            in.delete(0, in.length()-1);
+            in.setLength(0);
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -181,6 +181,7 @@ public class InterfaceDisplay {
                 }
             }
 
+            out.setLength(0);
             System.out.println("Contents appended to the file successfully.");
         } catch (IOException e) {
             e.printStackTrace();
