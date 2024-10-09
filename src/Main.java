@@ -15,14 +15,22 @@ public class Main extends Application {
     public static File Out_File;
     public static File In_File;
 
+    public static String[] SINGULAR_PATH;
+
     public static void main(String[] args) {
         launch(args);
     }
 
-    private static final InterfaceDisplay interfaceDisplay = new InterfaceDisplay();
-
     @Override
     public void start(Stage primaryStage) throws IOException {
+        if (System.getProperty("os.name").contains("Windows")) {
+            SINGULAR_PATH = new String[] {"wsl", "/usr/bin/Singular"};
+        } else {
+            SINGULAR_PATH = new String[] {"/home/fructose/Desktop/singular/bin/Singular"};
+        }
+
+        InterfaceDisplay interfaceDisplay = new InterfaceDisplay();
+
         verifyExistenceOfOutputDirectory();
         makeFilePaths();
 

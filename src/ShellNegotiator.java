@@ -8,7 +8,6 @@ import java.util.List;
 public class ShellNegotiator {
     private Process process;
     private PrintWriter processWriter;
-    private static final String SINGULAR_PATH = "/home/fructose/Desktop/singular/bin/Singular";
 
     private StringBuilder sessionOutput = new StringBuilder();
     private StringBuilder sessionInput = new StringBuilder();
@@ -25,12 +24,12 @@ public class ShellNegotiator {
     private void startProcess() {
         try {
             // Construct the command pipeline
-            List<String> commands = new ArrayList<>();
-            commands.add(SINGULAR_PATH); // Path to the binary
+            //List<String> commands = new ArrayList<>();
+            //commands.add(SINGULAR_PATH); // Path to the binary
 
 
             // Execute the command
-            ProcessBuilder pb = new ProcessBuilder(commands);
+            ProcessBuilder pb = new ProcessBuilder(Main.SINGULAR_PATH);
             pb.redirectErrorStream(true); // Combine stdout and stderr
             process = pb.start();
 
