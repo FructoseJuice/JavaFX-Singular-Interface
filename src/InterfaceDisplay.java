@@ -1,12 +1,8 @@
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
-import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -133,7 +129,7 @@ public class InterfaceDisplay {
     }
 
     public boolean flushSessionIO() throws IOException {
-        if (!Main.verifyExistenceOfOutputDirectory()) {
+        if (!Interface.verifyExistenceOfOutputDirectory()) {
             System.out.println("Could not write files. \nDirectory does not Exist.");
             return false;
         }
@@ -145,13 +141,13 @@ public class InterfaceDisplay {
             return true;
         }
 
-        if (!Main.createIOFiles()) {
+        if (!Interface.createIOFiles()) {
             System.out.println("Could not create files.");
             return false;
         }
 
-        File inFile = Main.In_File;
-        File outFile = Main.Out_File;
+        File inFile = Interface.In_File;
+        File outFile = Interface.Out_File;
 
         //Flush out strings
         try (FileWriter fileWriter = new FileWriter(inFile, true)) { // 'true' to append

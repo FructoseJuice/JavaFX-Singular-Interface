@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
 
-public class Main extends Application {
+public class Interface extends Application {
     public static final String OUTPUT_PATH = System.getProperty("user.dir") + "/IO";
     public int Session_Number;
     public static File Out_File;
@@ -18,17 +18,15 @@ public class Main extends Application {
     public static String[] SINGULAR_PATH;
 
     public static void main(String[] args) {
+        //Parse input
+        String command = args[0];
+        SINGULAR_PATH = command.split("\\|");
+
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        if (System.getProperty("os.name").contains("Windows")) {
-            SINGULAR_PATH = new String[] {"wsl", "/usr/bin/Singular"};
-        } else {
-            SINGULAR_PATH = new String[] {"/home/fructose/Desktop/singular/bin/Singular"};
-        }
-
         InterfaceDisplay interfaceDisplay = new InterfaceDisplay();
 
         verifyExistenceOfOutputDirectory();

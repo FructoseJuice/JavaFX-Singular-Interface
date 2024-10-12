@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="interface:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/interface_jar</output-path>
+    <root id="archive" name="temp.jar">
+      <element id="module-output" name="temp" />
+      <element id="directory" name="bin">
+        <element id="dir-copy" path="$PROJECT_DIR$/../../zulu21.36.17-ca-fx-jdk21.0.4-win_x64/bin" />
+      </element>
+    </root>
+  </artifact>
+</component>

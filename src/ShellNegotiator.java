@@ -1,9 +1,6 @@
 import javafx.scene.control.TextArea;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 public class ShellNegotiator {
     private Process process;
@@ -29,7 +26,7 @@ public class ShellNegotiator {
 
 
             // Execute the command
-            ProcessBuilder pb = new ProcessBuilder(Main.SINGULAR_PATH);
+            ProcessBuilder pb = new ProcessBuilder(Interface.SINGULAR_PATH);
             pb.redirectErrorStream(true); // Combine stdout and stderr
             process = pb.start();
 
