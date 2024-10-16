@@ -39,7 +39,7 @@ public class Installer extends Application {
             FileChooser fileChooser = new FileChooser();
 
             fileChooser.setTitle("Choose Singular Executable File");
-            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Files", "*.*"));
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Files", "*"));
             File selectedFile = fileChooser.showOpenDialog(primaryStage);
 
             String path = selectedFile.getAbsoluteFile().getPath();
@@ -57,6 +57,7 @@ public class Installer extends Application {
                 System.out.println();
             } else {
                 singularExecutablePath = new String[]{path};
+                filePathLabel.setText("File Location: " + path);
             }
 
             //Create installer button
@@ -96,7 +97,6 @@ public class Installer extends Application {
 
     private static boolean createJar(String[] singularExecutablePath) throws IOException {
         String jarFilePath = getCurrentJarPath();
-
         String outputJarPath = new File(new File(jarFilePath).getParent(), "SingularInterface.jar").getAbsolutePath();
 
         // Extract .java files from the JAR
@@ -114,6 +114,7 @@ public class Installer extends Application {
         // Clean up copied java files
         cleanUpJavaFiles(javaFiles);
 
+        // Check for creating of new Jar
         if (new File(outputJarPath).exists()) {
             System.out.println("Created Jar " + new File(outputJarPath).getPath());
         } else {
