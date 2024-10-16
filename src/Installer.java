@@ -17,8 +17,6 @@ import java.util.jar.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-//TODO: MAKE THIS INTO JAR, IMPROVE CLEANUP
-
 public class Installer extends Application {
     public static void main(String[] args) {
         launch(args);
@@ -33,57 +31,20 @@ public class Installer extends Application {
         VBox displayRoot = new VBox();
 
         Label fileChooserLabel = new Label("Please choose Singular Executable file path.");
-        Button fileButton = new Button("Choose File");
+        Button fileChooserButton = new Button("Choose File");
 
-        fileButton.setOnMouseClicked(event -> {
-            FileChooser fileChooser = new FileChooser();
 
-            fileChooser.setTitle("Choose Singular Executable File");
-            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Files", "*"));
-            File selectedFile = fileChooser.showOpenDialog(primaryStage);
-
-            String path = selectedFile.getAbsoluteFile().getPath();
-
-            if (!path.contains("Singular")) {
-                filePathLabel.setText("Invalid File Path. Not a Singular executable.");
-            }
-
-            // If windows split up
-            if (path.contains("wsl")) {
-                ArrayList<String> split = new ArrayList<>(List.of(path.split("\\\\")));
-                String combinedPath = String.join("/", split.subList(4, split.size()));
-                singularExecutablePath = new String[]{"wsl", "/" + combinedPath};
-                filePathLabel.setText("File Location: " + combinedPath);
-                System.out.println();
-            } else {
-                singularExecutablePath = new String[]{path};
-                filePathLabel.setText("File Location: " + path);
-            }
-
-            //Create installer button
-            if (installerButton == null) {
-                installerButton = new Button("Install");
-                installerButton.setOnMouseClicked(event1 -> {
-                    try {
-                        if (createJar(singularExecutablePath)) {
-                            filePathLabel.setText("Successful install.");
-                        }
-                    } catch (IOException e) {
-                        filePathLabel.setText("Error.");
-                        throw new RuntimeException(e);
-                    }
-                });
-
-                displayRoot.getChildren().add(installerButton);
-            }
+        fileChooserButton.setOnMouseClicked(event -> {
+            fileChooserDialogue(primaryStage, displayRoot);
         });
 
 
+        //Set graphical alignment of nodes
         fileChooserLabel.setAlignment(Pos.CENTER);
-        fileButton.setAlignment(Pos.CENTER);
+        fileChooserButton.setAlignment(Pos.CENTER);
         filePathLabel.setAlignment(Pos.CENTER);
 
-        displayRoot.getChildren().addAll(fileChooserLabel, fileButton, filePathLabel);
+        displayRoot.getChildren().addAll(fileChooserLabel, fileChooserButton, filePathLabel);
         displayRoot.setAlignment(Pos.CENTER);
         displayRoot.setSpacing(10);
 
@@ -93,6 +54,52 @@ public class Installer extends Application {
         primaryStage.setMinHeight(200);
         primaryStage.setMinWidth(300);
         primaryStage.show();
+    }
+
+    private static void fileChooserDialogue(Stage primaryStage, VBox displayRoot) {
+        FileChooser fileChooser = new FileChooser();
+
+        fileChooser.setTitle("Choose Singular Executable File");
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Files", "*"));
+        File selectedFile = fileChooser.showOpenDialog(primaryStage);
+
+        String path = selectedFile.getAbsoluteFile().getPath();
+
+        // Check if this file is indeed singular
+        String[] splitPath = path.toLowerCase().split("/");
+        if (!splitPath[splitPath.length-1].contains("singular")) {
+            filePathLabel.setText("Invalid File Path. Not a Singular executable.");
+            return;
+        }
+
+        // If windows linux subsystem split up
+        if (path.contains("wsl")) {
+            ArrayList<String> split = new ArrayList<>(List.of(path.split("\\\\")));
+            String combinedPath = String.join("/", split.subList(4, split.size()));
+            singularExecutablePath = new String[]{"wsl", "/" + combinedPath};
+            filePathLabel.setText("File Location: " + combinedPath);
+        } else {
+            // Raw file location on Linux
+            singularExecutablePath = new String[]{path};
+            filePathLabel.setText("File Location: " + path);
+        }
+
+        //Create installer button if it doesn't exist
+        if (installerButton == null) {
+            installerButton = new Button("Install");
+            installerButton.setOnMouseClicked(event1 -> {
+                try {
+                    if (createJar(singularExecutablePath)) {
+                        filePathLabel.setText("Successful install.");
+                    }
+                } catch (IOException e) {
+                    filePathLabel.setText("Error.");
+                    throw new RuntimeException(e);
+                }
+            });
+
+            displayRoot.getChildren().add(installerButton);
+        }
     }
 
     private static boolean createJar(String[] singularExecutablePath) throws IOException {
@@ -230,7 +237,6 @@ public class Installer extends Application {
 
     private static void cleanUpJavaFiles(List<File> javaFiles) {
         //Remove created .java files
-
         for (File javaFile : javaFiles) {
             if (javaFile.exists() && !javaFile.delete()) {
                 System.err.println("Failed to delete file: " + javaFile.getAbsolutePath());
