@@ -16,7 +16,7 @@ public class InterfaceDisplay {
 
     private static int commandID = 0;
 
-    public InterfaceDisplay() {
+    public InterfaceDisplay(String[] SINGULAR_PATH) {
         //Background for nodes
         BackgroundFill backgroundFill = new BackgroundFill(Paint.valueOf("LightGray"), null, null);
         Background greyBack = new Background(backgroundFill);
@@ -61,6 +61,7 @@ public class InterfaceDisplay {
             addIONodeToDisplay();
         });
 
+        // Set event handler on IO saving button
         saveSessionIOBUtton.setOnMouseClicked(event -> {
             try {
                 flushSessionIO();
@@ -70,7 +71,7 @@ public class InterfaceDisplay {
         });
 
         //Start process
-        negotiator = new ShellNegotiator(ioNode.getOutNode());
+        negotiator = new ShellNegotiator(SINGULAR_PATH, ioNode.getOutNode());
     }
 
 

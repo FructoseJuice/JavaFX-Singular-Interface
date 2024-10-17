@@ -1,3 +1,4 @@
+import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 
 import java.io.*;
@@ -13,20 +14,15 @@ public class ShellNegotiator {
 
     private OutputPrettifier prettifier = new OutputPrettifier();
 
-    public ShellNegotiator(TextArea outNode) {
+    public ShellNegotiator(String[] SINGULAR_PATH, TextArea outNode) {
         targetOutNode = outNode;
-        startProcess();
+        startProcess(SINGULAR_PATH);
     }
 
-    private void startProcess() {
+    private void startProcess(String[] SINGULAR_PATH) {
         try {
-            // Construct the command pipeline
-            //List<String> commands = new ArrayList<>();
-            //commands.add(SINGULAR_PATH); // Path to the binary
-
-
             // Execute the command
-            ProcessBuilder pb = new ProcessBuilder(Interface.SINGULAR_PATH);
+            ProcessBuilder pb = new ProcessBuilder(SINGULAR_PATH);
             pb.redirectErrorStream(true); // Combine stdout and stderr
             process = pb.start();
 
@@ -39,10 +35,14 @@ public class ShellNegotiator {
                     String line;
 
                     while ((line = reader.readLine()) != null) {
-                        //try (BufferedWriter outputWriter = new BufferedWriter())
+                        // Prettify this line first
                         line = prettifier.prettifyOutput(line);
 
-                        targetOutNode.appendText("\n" + line.trim());
+                        // Send line to target out node
+                        String finalLine = line;
+                        Platform.runLater(() -> targetOutNode.appendText("\n" + finalLine.trim()));
+
+                        // Load output buffer with this new text
                         sessionOutput.append("\n").append(line.trim()).append("\n");
                     }
                 } catch (IOException e) {

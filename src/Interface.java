@@ -15,7 +15,7 @@ public class Interface extends Application {
     public static File Out_File;
     public static File In_File;
 
-    public static String[] SINGULAR_PATH;
+    private static String[] SINGULAR_PATH;
 
     public static void main(String[] args) {
         //Parse input
@@ -26,8 +26,8 @@ public class Interface extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
-        InterfaceDisplay interfaceDisplay = new InterfaceDisplay();
+    public void start(Stage primaryStage)  {
+        InterfaceDisplay interfaceDisplay = new InterfaceDisplay(SINGULAR_PATH);
 
         verifyExistenceOfOutputDirectory();
         makeFilePaths();
