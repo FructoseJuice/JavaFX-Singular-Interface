@@ -1,10 +1,4 @@
 import javafx.application.Application;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.tools.JavaCompiler;
@@ -14,95 +8,26 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class Installer extends Application {
     public static void main(String[] args) {
         launch(args);
     }
 
-    private static final Label filePathLabel = new Label("");
-    private static String[] singularExecutablePath = null;
-    private static Button installerButton = null;
-
     @Override
     public void start(Stage primaryStage) {
-        VBox displayRoot = new VBox();
-
-        Label fileChooserLabel = new Label("Please choose Singular Executable file path.");
-        Button fileChooserButton = new Button("Choose File");
-
-
-        fileChooserButton.setOnMouseClicked(event -> {
-            fileChooserDialogue(primaryStage, displayRoot);
-        });
-
-
-        //Set graphical alignment of nodes
-        fileChooserLabel.setAlignment(Pos.CENTER);
-        fileChooserButton.setAlignment(Pos.CENTER);
-        filePathLabel.setAlignment(Pos.CENTER);
-
-        displayRoot.getChildren().addAll(fileChooserLabel, fileChooserButton, filePathLabel);
-        displayRoot.setAlignment(Pos.CENTER);
-        displayRoot.setSpacing(10);
-
-        Scene root = new Scene(displayRoot);
-        primaryStage.setScene(root);
-        primaryStage.setTitle("JavaFX Singular Interface Installer");
-        primaryStage.setMinHeight(200);
-        primaryStage.setMinWidth(300);
-        primaryStage.show();
+        InstallerDisplayManager.launchDisplay(primaryStage);
     }
 
-    private static void fileChooserDialogue(Stage primaryStage, VBox displayRoot) {
-        FileChooser fileChooser = new FileChooser();
+    public static String[] parseWSLPath(String path) {
+        ArrayList<String> split = new ArrayList<>(List.of(path.split("\\\\")));
+        String combinedPath = String.join("/", split.subList(4, split.size()));
 
-        fileChooser.setTitle("Choose Singular Executable File");
-        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("All Files", "*"));
-        File selectedFile = fileChooser.showOpenDialog(primaryStage);
-
-        String path = selectedFile.getAbsoluteFile().getPath();
-
-        // Check if this file is indeed singular
-        String[] splitPath = path.toLowerCase().split("/");
-        if (!splitPath[splitPath.length-1].contains("singular")) {
-            filePathLabel.setText("Invalid File Path. Not a Singular executable.");
-            return;
-        }
-
-        // If windows linux subsystem split up
-        if (path.contains("wsl")) {
-            ArrayList<String> split = new ArrayList<>(List.of(path.split("\\\\")));
-            String combinedPath = String.join("/", split.subList(4, split.size()));
-            singularExecutablePath = new String[]{"wsl", "/" + combinedPath};
-            filePathLabel.setText("File Location: " + combinedPath);
-        } else {
-            // Raw file location on Linux
-            singularExecutablePath = new String[]{path};
-            filePathLabel.setText("File Location: " + path);
-        }
-
-        //Create installer button if it doesn't exist
-        if (installerButton == null) {
-            installerButton = new Button("Install");
-            installerButton.setOnMouseClicked(event1 -> {
-                try {
-                    if (createJar(singularExecutablePath)) {
-                        filePathLabel.setText("Successful install.");
-                    }
-                } catch (IOException e) {
-                    filePathLabel.setText("Error.");
-                    throw new RuntimeException(e);
-                }
-            });
-
-            displayRoot.getChildren().add(installerButton);
-        }
+        return new String[] {"wsl", "/" + combinedPath};
     }
 
-    private static boolean createJar(String[] singularExecutablePath) throws IOException {
+
+    public static boolean createJar(String[] singularExecutablePath) throws IOException {
         String jarFilePath = getCurrentJarPath();
         String outputJarPath = new File(new File(jarFilePath).getParent(), "SingularInterface.jar").getAbsolutePath();
 
@@ -119,7 +44,7 @@ public class Installer extends Application {
         createNewJar(outputJarPath, javaFiles, singularPathFile);
 
         // Clean up copied java files
-        cleanUpJavaFiles(javaFiles);
+        cleanUpJavaClassFiles(javaFiles);
 
         // Check for creating of new Jar
         if (new File(outputJarPath).exists()) {
@@ -132,11 +57,13 @@ public class Installer extends Application {
         return true;
     }
 
+
     private static String getCurrentJarPath() {
         String path = Installer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 
         return new File(path).getAbsolutePath();
     }
+
 
     private static List<File> extractJavaFilesFromJar(String jarFilePath) throws IOException {
         List<File> javaFiles = new ArrayList<>();
@@ -170,6 +97,7 @@ public class Installer extends Application {
         return javaFiles;
     }
 
+
     private static void compileJavaFiles(List<File> javaFiles) {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
@@ -177,6 +105,50 @@ public class Installer extends Application {
             compiler.run(null, null, null, javaFile.getPath());
         }
     }
+
+
+    private static Manifest createManifest() throws IOException {
+        // Create a temporary file for the manifest
+        File manifestFile = File.createTempFile("MANIFEST", ".MF");
+        manifestFile.deleteOnExit(); // Ensure it gets deleted on exit
+
+        // Write the correct contents to the manifest file
+        try (FileWriter writer = new FileWriter(manifestFile)) {
+            writer.write("Manifest-Version: 1.0\n");
+            writer.write("Main-Class: Interface\n");
+            writer.write("\n"); // Necessary for the manifest format
+        }
+
+        // Load the manifest from the file
+        try (FileInputStream fis = new FileInputStream(manifestFile)) {
+            return new Manifest(fis);
+        }
+    }
+
+
+    private static File createSingularPathFile(String[] contents) {
+        File tempFile = null;
+
+        try {
+            tempFile = File.createTempFile("singularPath", ".txt");
+
+            // Delete on exit
+            tempFile.deleteOnExit();
+            try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+                for (int i = 0; i < contents.length; i++) {
+                    fos.write((contents[i] + (i != contents.length - 1 ? "|" : "")).getBytes());
+                }
+            }
+
+            System.out.println("Created " + tempFile.getPath());
+        } catch (IOException e) {
+            //noinspection CallToPrintStackTrace
+            e.printStackTrace();
+        }
+
+        return tempFile;
+    }
+
 
     private static void createNewJar(String outputJarPath, List<File> javaFiles, File singularPathFile) throws IOException {
         // Create a manifest file
@@ -217,25 +189,8 @@ public class Installer extends Application {
         }
     }
 
-    private static Manifest createManifest() throws IOException {
-        // Create a temporary file for the manifest
-        File manifestFile = File.createTempFile("MANIFEST", ".MF");
-        manifestFile.deleteOnExit(); // Ensure it gets deleted on exit
 
-        // Write the correct contents to the manifest file
-        try (FileWriter writer = new FileWriter(manifestFile)) {
-            writer.write("Manifest-Version: 1.0\n");
-            writer.write("Main-Class: Launcher\n");
-            writer.write("\n"); // Necessary for the manifest format
-        }
-
-        // Load the manifest from the file
-        try (FileInputStream fis = new FileInputStream(manifestFile)) {
-            return new Manifest(fis);
-        }
-    }
-
-    private static void cleanUpJavaFiles(List<File> javaFiles) {
+    private static void cleanUpJavaClassFiles(List<File> javaFiles) {
         //Remove created .java files
         for (File javaFile : javaFiles) {
             if (javaFile.exists() && !javaFile.delete()) {
@@ -244,27 +199,5 @@ public class Installer extends Application {
                 System.out.println("Cleaned up " + javaFile.getPath());
             }
         }
-    }
-
-    private static File createSingularPathFile(String[] contents) {
-        File tempFile = null;
-
-        try {
-            tempFile = File.createTempFile("singularPath", ".txt");
-
-            // Delete on exit
-            tempFile.deleteOnExit();
-            try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-                for (int i = 0; i < contents.length; i++) {
-                    fos.write((contents[i] + (i != contents.length - 1 ? "|" : "")).getBytes());
-                }
-            }
-
-            System.out.println("Created " + tempFile.getPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return tempFile;
     }
 }

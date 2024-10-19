@@ -3,8 +3,7 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
@@ -18,9 +17,15 @@ public class Interface extends Application {
     private static String[] SINGULAR_PATH;
 
     public static void main(String[] args) {
-        //Parse input
-        String command = args[0];
-        SINGULAR_PATH = command.split("\\|");
+        //Check if singular path is given through command line
+        if (args.length != 0) {
+            //Parse input
+            String command = args[0];
+            SINGULAR_PATH = command.split("\\|");
+        } else {
+            //Try to read singular path from jar file
+            SINGULAR_PATH = readSingularPath().split("\\|");
+        }
 
         launch(args);
     }
@@ -41,6 +46,34 @@ public class Interface extends Application {
         primaryStage.setMinWidth(580);
         primaryStage.setTitle("Session #" + Session_Number);
         primaryStage.show();
+    }
+
+    public static String readSingularPath() {
+        final String singularPathFile = "singularPath.txt";
+        String commandArgument = "";
+
+        try (InputStream inputStream = Interface.class.getResourceAsStream(singularPathFile)) {
+            if (inputStream == null) {
+                throw new FileNotFoundException("Resource not found: " + singularPathFile);
+            }
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    commandArgument = line;
+                }
+            }
+        } catch (IOException e) {
+            //noinspection CallToPrintStackTrace
+            e.printStackTrace();
+        }
+
+        if (commandArgument.isEmpty()) {
+            System.out.println("Failed to read singular path.");
+            System.exit(2);
+        }
+
+        return commandArgument;
     }
 
     public static boolean verifyExistenceOfOutputDirectory() {
@@ -105,9 +138,5 @@ public class Interface extends Application {
         } else {
             return Out_File.createNewFile() && In_File.createNewFile();
         }
-    }
-
-    public int getSessionNumber() {
-        return Session_Number;
     }
 }
