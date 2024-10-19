@@ -83,7 +83,7 @@ public class InstallerDisplayManager {
         DirectoryChooser directoryChooser = new DirectoryChooser();
 
         directoryChooser.setTitle("Choose MCGB Directory");
-        Director
+
     }
 
 
