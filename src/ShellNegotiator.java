@@ -12,8 +12,6 @@ public class ShellNegotiator {
 
     private TextArea targetOutNode;
 
-    private OutputPrettifier prettifier = new OutputPrettifier();
-
     public ShellNegotiator(String[] SINGULAR_PATH, TextArea outNode) {
         targetOutNode = outNode;
         startProcess(SINGULAR_PATH);
@@ -36,7 +34,7 @@ public class ShellNegotiator {
 
                     while ((line = reader.readLine()) != null) {
                         // Prettify this line first
-                        line = prettifier.formatMathString(line);
+                        line = OutputFormatter.formatMathString(line);
 
                         // Send line to target out node
                         String finalLine = line;
