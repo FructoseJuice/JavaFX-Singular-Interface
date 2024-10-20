@@ -3,7 +3,6 @@ import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
 public class StringFinder {
 
     private static final Charset CHARSET = StandardCharsets.ISO_8859_1;

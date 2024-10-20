@@ -36,7 +36,7 @@ public class ShellNegotiator {
 
                     while ((line = reader.readLine()) != null) {
                         // Prettify this line first
-                        line = prettifier.prettifyOutput(line);
+                        line = prettifier.formatMathString(line);
 
                         // Send line to target out node
                         String finalLine = line;

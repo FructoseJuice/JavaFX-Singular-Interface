@@ -7,7 +7,7 @@ public class OutputPrettifier {
     private final Pattern exponentPattern = Pattern.compile("([a-zA-Z]+)(\\d+)");
     private final Pattern caratPattern = Pattern.compile("\\^(\\d+)");
 
-    public String prettifyOutput(String output) {
+    public String formatMathString(String output) {
         // Use StringBuilder for efficient string manipulation
         StringBuilder result = new StringBuilder(output);
 
@@ -21,10 +21,10 @@ public class OutputPrettifier {
         result = new StringBuilder(commaPattern.matcher(result).replaceAll(", $1"));
 
         // Replace caret notation
-        result = new StringBuilder(caratPattern.matcher(result).replaceAll("^($1)"));
+        //result = new StringBuilder(caratPattern.matcher(result).replaceAll("^($1)"));
 
         // Replace exponent notation
-        result = new StringBuilder(exponentPattern.matcher(result).replaceAll("$1^($2)"));
+        result = new StringBuilder(exponentPattern.matcher(result).replaceAll("$1^$2"));
 
         return result.toString().trim(); // Trim to clean up leading/trailing spaces
     }
